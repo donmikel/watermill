@@ -659,3 +659,8 @@ func (disabledPublisher) Publish(topic string, messages ...*Message) error {
 func (disabledPublisher) Close() error {
 	return nil
 }
+
+// SetMessageIgnoredToCtx mark the message as ignored.
+func SetMessageIgnoredToCtx(ctx context.Context) context.Context {
+	return context.WithValue(ctx, messageIsIgnoredKey, true)
+}

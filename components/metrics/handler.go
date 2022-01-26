@@ -46,14 +46,17 @@ func (m HandlerPrometheusMetricsMiddleware) Middleware(h message.HandlerFunc) me
 			labelKeyHandlerName: message.HandlerNameFromCtx(ctx),
 		}
 
-		defer func() {
+		defer func(msg *message.Message) {
+			if message.MessageIsIgnoredFromCtx(msg.Context()) {
+				return
+			}
 			if err != nil {
 				labels[labelSuccess] = "false"
 			} else {
 				labels[labelSuccess] = "true"
 			}
 			m.handlerExecutionTimeSeconds.With(labels).Observe(time.Since(now).Seconds())
-		}()
+		}(msg)
 
 		return h(msg)
 	}
